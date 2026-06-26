@@ -81,13 +81,14 @@ class MateriController extends Controller
         $query->sesi = $sesi;
         $query->save();
         return 'ok';
-      }else{
+      } else {
+        $cek->id_kelas = $id_kelas; // tambahkan baris ini
         $cek->judul = $judul;
         $cek->isi = $isi;
         $cek->status = $status;
         $cek->save();
         return 'ok';
-      }
+        }
     }
   }
   public function detail($id)

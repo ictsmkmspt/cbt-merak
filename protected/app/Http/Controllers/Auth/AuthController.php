@@ -4,64 +4,57 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use Validator;
+use Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Registration & Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users, as well as the
-    | authentication of existing users. By default, this controller uses
-    | a simple trait to add these behaviors. Why don't you explore it?
-    |
-    */
-
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
-    /**
-     * Create a new authentication controller instance.
-     *
-     * @return void
-     */
+    // Default redirect (akan di-override oleh redirectPath())
+    protected $redirectTo = '/guru';
+
+    protected $username = 'email';
+
     public function __construct()
     {
         $this->middleware('guest', ['except' => 'getLogout']);
     }
 
     /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
+     * Redirect setelah login berdasarkan status user:
+     * - Status A (Admin) atau G (Guru) → /guru
+     * - Status S (Siswa)               → /siswa
      */
+    public function redirectPath()
+    {
+        $user = Auth::user();
+        if ($user) {
+            if ($user->status == 'S') {
+                return url('/siswa');
+            }
+        }
+        return url('/guru');
+    }
+
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'nama' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
+            'nama'     => 'required|max:255',
+            'email'    => 'required|email|max:255|unique:users',
             'password' => 'required|confirmed|min:6',
         ]);
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return User
-     */
     protected function create(array $data)
     {
         return User::create([
-            'nama' => $data['nama'],
-            'email' => $data['email'],
+            'nama'     => $data['nama'],
+            'email'    => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
     }
-
-    protected $username = 'email';
 }

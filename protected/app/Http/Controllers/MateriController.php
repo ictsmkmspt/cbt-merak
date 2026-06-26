@@ -52,7 +52,8 @@ class MateriController extends Controller
                               ->select('users.nama as nama_user', 'users.gambar', 'aktifitas.*')
                               ->orderby('aktifitas.id', 'desc')->limit(5)->get();
       $materi = Materi::where('id', $id)->first();
-      return view('guru.ubah_materi', compact('materi', 'user', 'aktifitas', 'school'));
+      $kelas = Kelas::orderby('nama','asc')->get(); // tambah baris ini: untuk dropdown kelas di form ubah
+      return view('guru.ubah_materi', compact('materi', 'user', 'aktifitas', 'school', 'kelas'));
     }else{
       return redirect('siswa');
     }
@@ -81,14 +82,14 @@ class MateriController extends Controller
         $query->sesi = $sesi;
         $query->save();
         return 'ok';
-      } else {
-        $cek->id_kelas = $id_kelas; // tambahkan baris ini
+      }else{
+        $cek->id_kelas = $id_kelas; // tambah baris ini: id_kelas juga harus diperbarui saat update
         $cek->judul = $judul;
         $cek->isi = $isi;
         $cek->status = $status;
         $cek->save();
         return 'ok';
-        }
+      }
     }
   }
   public function detail($id)

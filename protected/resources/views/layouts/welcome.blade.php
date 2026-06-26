@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <link rel="icon" href="{{ url('img/favicon.ico') }}">
+  <link rel="icon" href="https://cdn-sdotid.adg.id/images/cc7d170c-fd31-4d63-9c70-251e720ea688_640x640.png">
   <title>{{ $namasekolah ?? 'CBT Online' }}</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">

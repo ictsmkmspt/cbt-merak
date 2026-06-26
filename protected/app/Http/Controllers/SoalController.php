@@ -33,36 +33,34 @@ class SoalController extends Controller
       $this->middleware('auth');
   }
 
+ <?php
+// ================================================================
+// PATCH untuk SoalController.php
+// Ganti fungsi soal_guru() yang lama dengan yang ini
+// ================================================================
+
   public function soal_guru()
   {
-    $school = School::first();
-    $user = User::where('id', '=', Auth::user()->id)->first();
-    /*
-    if (Auth::user()->status == "A"){
-      $jawabs = Jawab::orderby('id', 'desc')->get();
-    }elseif (Auth::user()->status == "G") {
-      $jawabs = Jawab::where('id_user', Auth::user()->id)->get();
-    } */
-    $kelas = Kelas::orderby('nama', 'asc')->get();
-    // $soals = Soal::all();
+	    $school  = School::first();
+	    $user    = User::where('id', Auth::user()->id)->first();
+	    $kelas   = Kelas::orderby('nama', 'asc')->get();
+	    $id_user = Auth::user()->id;
 
-    // Perlu ditambahkan field jadwal (hari, tgl, jam ujian)
-    $id_user = Auth::user()->id;
-    if (Auth::user()->status == "A"){
-      $soals = Soal::paginate(15);
-      $materis = Materi::join('soals', 'materis.id', '=', 'soals.materi')
-                          ->select('materis.*')
-                          ->where('materis.id_user', Auth::user()->id)->where('materis.id', '!=', 'soals.materi')->get();
-    }elseif (Auth::user()->status == "G") {
-      $soals = Soal::where('id_user', $id_user)->paginate(15);
-      $materis = Materi::join('soals', 'materis.id', '=', 'soals.materi')
-                          ->select('materis.*')
-                          ->where('materis.id', '!=', 'soals.materi')->get();
-      //trace materis
-    }
-    //return view('guru.soal', compact('user', 'school', 'jawabs', 'kelas', 'soals', 'materis'));
-    return view('guru.soal', compact('user', 'school', 'kelas', 'soals', 'materis'));
+	    // Daftar paket soal
+	    if (Auth::user()->status == "A") {
+	      $soals = Soal::paginate(15);
+	    } else {
+	      $soals = Soal::where('id_user', $id_user)->paginate(15);
+	    }
 
+	    // FIX: Ambil SEMUA materi milik guru ini (bukan yang sudah di-join soal)
+	    if (Auth::user()->status == "A") {
+	      $materis = Materi::where('id_user', $id_user)->get();
+	    } else {
+	      $materis = Materi::where('id_user', $id_user)->get();
+	    }
+
+	    return view('guru.soal', compact('user', 'school', 'kelas', 'soals', 'materis'));
   }
   public function get_soal_guru()
   {

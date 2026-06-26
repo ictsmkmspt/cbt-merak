@@ -14,7 +14,8 @@ class AuthController extends Controller
 {
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
-    protected $username = 'email';
+    protected $username  = 'email';
+    protected $loginPath = '/auth/login';
 
     public function __construct()
     {
@@ -22,31 +23,15 @@ class AuthController extends Controller
     }
 
     /**
-     * Override postLogin sepenuhnya.
-     * Login gagal → redirect ke '/' dengan flash session error + role
-     * Login berhasil → redirect berdasarkan status user
+     * Redirect setelah login berhasil berdasarkan status user
      */
-    public function postLogin(Request $request)
+    public function redirectPath()
     {
-        $email    = $request->input('email');
-        $password = $request->input('password');
-        $remember = $request->has('remember');
-        $role     = $request->input('role', 'guru');
-
-        if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
-            // Login berhasil — redirect berdasarkan status user
-            $user = Auth::user();
-            if ($user->status == 'S') {
-                return redirect('/siswa');
-            }
-            return redirect('/guru');
+        $user = Auth::user();
+        if ($user && $user->status == 'S') {
+            return url('/siswa');
         }
-
-        // Login gagal — kembali ke halaman utama dengan pesan error
-        return redirect('/')
-            ->with('login_error', 'Email atau password yang Anda masukkan salah.')
-            ->with('login_role', $role)
-            ->withInput($request->only('email'));
+        return url('/guru');
     }
 
     protected function validator(array $data)

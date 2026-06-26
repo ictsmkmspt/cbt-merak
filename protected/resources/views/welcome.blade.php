@@ -147,7 +147,6 @@ body, .cbt-page { min-height: 100vh; font-family: 'Inter','Segoe UI',sans-serif;
   <div class="blob blob-3"></div>
 
   <!-- NAVBAR -->
- <!-- 
   <nav class="cbt-nav">
     <div class="cbt-nav-brand">
       @if($logosekolah)
@@ -160,7 +159,6 @@ body, .cbt-page { min-height: 100vh; font-family: 'Inter','Segoe UI',sans-serif;
       <button class="cbt-nav-link" onclick="openModal('siswa')">🎓 Siswa</button>
     </div>
   </nav>
--->
 
   <!-- KONTEN UTAMA -->
   <div class="cbt-main">
@@ -168,7 +166,7 @@ body, .cbt-page { min-height: 100vh; font-family: 'Inter','Segoe UI',sans-serif;
 
       <div class="cbt-logo-wrap">
         @if($logosekolah)
-          <img src=" https://cdn-sdotid.adg.id/images/cc7d170c-fd31-4d63-9c70-251e720ea688_640x640.png " alt="Logo" class="cbt-logo">
+          <img src="{{ url('img/'.$logosekolah) }}" alt="Logo" class="cbt-logo">
         @else
           <div class="cbt-logo-fallback">
             <i class="material-icons">school</i>
@@ -176,10 +174,10 @@ body, .cbt-page { min-height: 100vh; font-family: 'Inter','Segoe UI',sans-serif;
         @endif
       </div>
 
-      <!-- <div class="cbt-badge">
+      <div class="cbt-badge">
         <span class="cbt-badge-dot"></span>
         Sistem Aktif
-      </div> -->
+      </div>
 
       <div class="cbt-school">{{ $namasekolah ?: 'CBT Online' }}</div>
       <div class="cbt-subtitle">Computer Based Test &mdash; Ujian Berbasis Komputer</div>
@@ -250,7 +248,7 @@ body, .cbt-page { min-height: 100vh; font-family: 'Inter','Segoe UI',sans-serif;
     <!-- ERROR -->
     <div class="login-error" id="loginError">
       <i class="material-icons" style="font-size:14px;vertical-align:middle;">error_outline</i>
-      Email atau password salah. Silakan coba lagi.
+      Email atau password yang Anda masukkan salah. Silakan coba lagi.
     </div>
 
     <!-- FORM -->
@@ -356,11 +354,23 @@ function togglePw() {
   }
 }
 
-@if(session('login_error') || (isset($errors) && $errors->has('email')))
-  window.addEventListener('DOMContentLoaded', function(){
-    openModal('guru');
-    document.getElementById('loginError').style.display = 'block';
-  });
+@if(session('login_error'))
+window.addEventListener('DOMContentLoaded', function(){
+  var role = '{{ session("login_role", "guru") }}';
+  openModal(role);
+  var errBox = document.getElementById('loginError');
+  errBox.innerHTML = '<i class="material-icons" style="font-size:14px;vertical-align:middle;">error_outline</i> {{ session("login_error") }}';
+  errBox.style.display = 'block';
+  if (role === 'siswa') {
+    errBox.style.background = '#fffbeb';
+    errBox.style.borderColor = '#fcd34d';
+    errBox.style.color = '#92400e';
+  } else {
+    errBox.style.background = '#fef2f2';
+    errBox.style.borderColor = '#fecaca';
+    errBox.style.color = '#dc2626';
+  }
+});
 @endif
 </script>
 @endsection

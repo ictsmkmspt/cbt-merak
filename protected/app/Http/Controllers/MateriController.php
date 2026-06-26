@@ -29,18 +29,20 @@ class MateriController extends Controller
 
   public function index()
   {
-    if (Auth::user()->status == "G" or Auth::user()->status == "A") {
-      $school = School::first();
-      $user = User::where('id', '=', Auth::user()->id)->first();
-      $aktifitas = Aktifitas::join('users', 'aktifitas.id_user', '=', 'users.id')
-                              ->select('users.nama as nama_user', 'users.gambar', 'aktifitas.*')
-                              ->orderby('aktifitas.id', 'desc')->limit(5)->get();
-      $materis = Materi::where('id_user', Auth::user()->id)->paginate(15);
-      return view('guru.materi', compact('materis', 'user', 'aktifitas', 'school'));
-    }else{
-      return redirect('siswa');
-    }
+   if (Auth::user()->status == "G" or Auth::user()->status == "A") {
+    $school    = School::first();
+    $user      = User::where('id', Auth::user()->id)->first();
+    $aktifitas = Aktifitas::join('users','aktifitas.id_user','=','users.id')
+                  ->select('users.nama as nama_user','users.gambar','aktifitas.*')
+                  ->orderby('aktifitas.id','desc')->limit(5)->get();
+    $materis   = Materi::where('id_user', Auth::user()->id)->paginate(15);
+    $kelas     = Kelas::orderby('nama','asc')->get();
+    return view('guru.materi', compact('materis','user','aktifitas','school','kelas'));
+  } else {
+    return redirect('siswa');
+   }
   }
+
   public function ubah($id)
   {
     if (Auth::user()->status == "G" or Auth::user()->status == "A") {
@@ -61,6 +63,7 @@ class MateriController extends Controller
     $judul = Input::get('judul');
     $isi = Input::get('isi');
     $status = Input::get('status');
+    $id_kelas = Input::get('id_kelas'); // tambah baris ini
     if ($judul == "") {
       return "<b>Error:</b> Judul tidak boleh kosong.";
     }elseif ($isi == "") {
@@ -70,6 +73,7 @@ class MateriController extends Controller
       if ($cek == "") {
         $query = new Materi;
         $query->id_user = Auth::user()->id;
+	$query->id_kelas = $id_kelas; // tambah baris ini
         $query->judul = $judul;
         $query->isi = $isi;
         $query->status = $status;

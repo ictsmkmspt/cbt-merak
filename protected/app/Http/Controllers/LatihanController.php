@@ -24,12 +24,21 @@ class LatihanController extends Controller
 
   public function index()
   {
-  	$user = User::where('id', Auth::user()->id)->first();
+    $user = User::where('id', Auth::user()->id)->first();
     $school = School::first();
-  	$materis = Materi::join('users', 'materis.id_user', '=', 'users.id')
-  						->select('users.nama as nama_user', 'materis.*')
-  						->where('materis.status', 'Y')
-  						->orderBy('materis.id', 'DESC')->paginate('4');
+    
+    $id_kelas_siswa = Auth::user()->id_kelas;
+
+    $materis = Materi::join('users', 'materis.id_user', '=', 'users.id')
+                      ->select('users.nama as nama_user', 'materis.*')
+                      ->where('materis.status', 'Y')
+                      ->where(function($q) use ($id_kelas_siswa) {
+                          $q->whereNull('materis.id_kelas')
+                            ->orWhere('materis.id_kelas', $id_kelas_siswa);
+                      })
+                      ->orderBy('materis.id', 'DESC')
+                      ->paginate('4');
+
     return view('siswa.latihan.index', compact('materis', 'user', 'school'));
   }
   public function detail($id, $judul)

@@ -372,7 +372,7 @@ class SiswaController extends Controller
               \DB::raw('sum(jawabs.score) as count')])
             ->where('jawabs.id_user', Auth::user()->id)
             ->where('status', 'Y')
-            /*->where('soals.jenis', 1)*/
+            ->where('soals.jenis', '!=', 1) // sembunyikan hasil jenis Ujian dari siswa, hanya tampilkan Latihan
             ->orderby('jawabs.id', 'desc')
             ->groupby('id_soal')->paginate(10);
     return view('siswa.hasil', compact('user', 'school', 'jawabs'));

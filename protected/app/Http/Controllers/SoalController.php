@@ -33,7 +33,6 @@ class SoalController extends Controller
       $this->middleware('auth');
   }
 
- <?php
 // ================================================================
 // PATCH untuk SoalController.php
 // Ganti fungsi soal_guru() yang lama dengan yang ini

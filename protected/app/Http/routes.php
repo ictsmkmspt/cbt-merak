@@ -164,6 +164,7 @@ Route::post('/get-soal/{id}', 'SiswaController@get_soal');
 // Route untuk Latihan siswa
 Route::get('/latihan', 'LatihanController@index');
 Route::get('/latihan/read/{id}/{judul}', 'LatihanController@detail');
+Route::get('/latihan/kerjakan/{id_soal}', 'LatihanController@kerjakan');
 
 // Route untuk Materi guru
 Route::get('/materi', 'MateriController@index');
